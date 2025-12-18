@@ -1,6 +1,7 @@
 const express = require('express');
 const healthController = require('../controllers/health');
 const authRoutes = require('./auth');
+const playlistRoutes = require('./playlist');
 
 const router = express.Router();
 // Health endpoint
@@ -35,5 +36,8 @@ router.get('/', healthController.check.bind(healthController));
 
 // Mount auth routes
 router.use('/api/auth', authRoutes);
+
+// Mount playlist routes
+router.use('/api/playlists', playlistRoutes);
 
 module.exports = router;

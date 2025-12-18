@@ -22,6 +22,10 @@ const options = {
       {
         name: 'Authentication',
         description: 'User authentication and profile management endpoints'
+      },
+      {
+        name: 'Playlists',
+        description: 'User playlist management endpoints'
       }
     ]
   },
