@@ -41,13 +41,13 @@ CREATE INDEX idx_profiles_user_id ON profiles(user_id);
 CREATE INDEX idx_profiles_username ON profiles(username);
 ```
 
-#### 2. playlists (Future)
-This table will store user playlists.
+#### 2. playlists
+This table stores user playlists.
 
 ```sql
 CREATE TABLE playlists (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  owner_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
   is_public BOOLEAN DEFAULT false,
@@ -59,13 +59,13 @@ ALTER TABLE playlists ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view public playlists or own playlists"
   ON playlists FOR SELECT
-  USING (is_public = true OR auth.uid() = user_id);
+  USING (is_public = true OR auth.uid() = owner_id);
 
 CREATE POLICY "Users can manage own playlists"
   ON playlists FOR ALL
-  USING (auth.uid() = user_id);
+  USING (auth.uid() = owner_id);
 
-CREATE INDEX idx_playlists_user_id ON playlists(user_id);
+CREATE INDEX idx_playlists_owner_id ON playlists(owner_id);
 ```
 
 #### 3. playlist_tracks (Future)
@@ -88,7 +88,7 @@ CREATE POLICY "Users can view tracks in accessible playlists"
     EXISTS (
       SELECT 1 FROM playlists
       WHERE playlists.id = playlist_tracks.playlist_id
-        AND (playlists.is_public = true OR playlists.user_id = auth.uid())
+        AND (playlists.is_public = true OR playlists.owner_id = auth.uid())
     )
   );
 
@@ -98,7 +98,7 @@ CREATE POLICY "Users can manage tracks in own playlists"
     EXISTS (
       SELECT 1 FROM playlists
       WHERE playlists.id = playlist_tracks.playlist_id
-        AND playlists.user_id = auth.uid()
+        AND playlists.owner_id = auth.uid()
     )
   );
 

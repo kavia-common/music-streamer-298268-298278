@@ -25,14 +25,14 @@ class PlaylistService {
     const { data, error } = await this.supabase
       .from('playlists')
       .insert({
-        user_id: userId,
+        owner_id: userId,
         name: name,
         description: null,
         is_public: false,
         created_at: now,
         updated_at: now
       })
-      .select('id, name, description, is_public, created_at, updated_at')
+      .select('id, owner_id, name, description, is_public, created_at, updated_at')
       .single();
 
     if (error) {
@@ -55,7 +55,7 @@ class PlaylistService {
     const { data, error } = await this.supabase
       .from('playlists')
       .select('id, name, created_at, updated_at')
-      .eq('user_id', userId)
+      .eq('owner_id', userId)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -78,7 +78,7 @@ class PlaylistService {
   async getPlaylistById(playlistId, userId) {
     const { data, error } = await this.supabase
       .from('playlists')
-      .select('id, name, description, is_public, created_at, updated_at')
+      .select('id, owner_id, name, description, is_public, created_at, updated_at')
       .eq('id', playlistId)
       .single();
 
@@ -88,7 +88,7 @@ class PlaylistService {
     }
 
     // Check access: owner or public playlist
-    if (data.user_id !== userId && !data.is_public) {
+    if (data.owner_id !== userId && !data.is_public) {
       throw new Error('Access denied to this playlist');
     }
 

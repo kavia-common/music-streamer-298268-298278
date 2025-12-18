@@ -55,6 +55,10 @@ const router = express.Router();
  *                           type: string
  *                           format: uuid
  *                           description: Unique playlist identifier
+ *                         owner_id:
+ *                           type: string
+ *                           format: uuid
+ *                           description: User ID of the playlist owner
  *                         name:
  *                           type: string
  *                           description: Playlist name
@@ -161,6 +165,9 @@ router.get('/', authenticateToken, playlistController.getUserPlaylists.bind(play
  *                       type: object
  *                       properties:
  *                         id:
+ *                           type: string
+ *                           format: uuid
+ *                         owner_id:
  *                           type: string
  *                           format: uuid
  *                         name:
